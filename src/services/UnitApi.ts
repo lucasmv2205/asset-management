@@ -1,3 +1,4 @@
+import { unitType } from '../types/unit'
 import axios from './api'
 
 export default {
@@ -15,14 +16,14 @@ export default {
       .catch((error) => Promise.reject(error))
   },
 
-  edit(unit: any) {
+  edit(unit: unitType) {
     return axios
       .patch(`/units/${unit.id}`, unit)
       .then((response) => Promise.resolve(response))
       .catch((error) => Promise.reject(error))
   },
 
-  create(unit: any) {
+  create(unit: unitType) {
     return axios
       .post(`/units/`, unit)
       .then((response) => Promise.resolve(response))

@@ -1,3 +1,4 @@
+import { companyType } from '../types/company'
 import axios from './api'
 
 export default {
@@ -15,14 +16,14 @@ export default {
       .catch((error) => Promise.reject(error))
   },
 
-  edit(company: any) {
+  edit(company: companyType) {
     return axios
       .patch(`/companies/${company.id}`, company)
       .then((response) => Promise.resolve(response))
       .catch((error) => Promise.reject(error))
   },
 
-  create(company: any) {
+  create(company: companyType) {
     return axios
       .post(`/companies/`, company)
       .then((response) => Promise.resolve(response))

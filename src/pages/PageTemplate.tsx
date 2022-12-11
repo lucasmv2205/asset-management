@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, MenuProps } from "antd";
+import React, { useEffect } from "react";
+import { Button } from "antd";
 import { Layout, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
@@ -8,24 +8,14 @@ import { useAssets } from "../state/hooks/useAssets";
 import { useUnits } from "../state/hooks/useUnits";
 import { useCompanies } from "../state/hooks/useCompanies";
 import { useUsers } from "../state/hooks/useUsers";
+import {
+  GroupOutlined,
+  BranchesOutlined,
+  UsergroupAddOutlined,
+  HddOutlined,
+} from "@ant-design/icons";
 
-const { Header, Content, Footer, Sider } = Layout;
-
-type MenuItem = Required<MenuProps>["items"][number];
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
+const { Header, Content, Footer } = Layout;
 
 export const PageTemplate: React.FC = () => {
   const { setAssets } = useAssets();
@@ -78,31 +68,6 @@ export const PageTemplate: React.FC = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
-        <Menu
-          theme="dark"
-          mode="inline"
-          items={[
-            {
-              key: "1",
-              icon: <UserOutlined />,
-              label: (
-                <Button
-                  style={{ color: "#fff" }}
-                  type="link"
-                  onClick={() => navigate("/assets")}
-                >
-                  Assets
-                </Button>
-              ),
-            },
-          ]}
-        ></Menu>
-      </Sider> */}
       <Layout className="site-layout">
         <Header
           style={{
@@ -151,6 +116,7 @@ export const PageTemplate: React.FC = () => {
                 onClick={() => navigate("/assets")}
                 type="link"
               >
+                <HddOutlined />
                 Assets
               </Button>
             </div>
@@ -160,6 +126,7 @@ export const PageTemplate: React.FC = () => {
                 onClick={() => navigate("/units")}
                 type="link"
               >
+                <BranchesOutlined />
                 Units
               </Button>
             </div>
@@ -169,6 +136,7 @@ export const PageTemplate: React.FC = () => {
                 onClick={() => navigate("/companies")}
                 type="link"
               >
+                <GroupOutlined />
                 Companies
               </Button>
             </div>
@@ -178,6 +146,7 @@ export const PageTemplate: React.FC = () => {
                 onClick={() => navigate("/users")}
                 type="link"
               >
+                <UsergroupAddOutlined />
                 Users
               </Button>
             </div>

@@ -8,19 +8,11 @@ export default {
       .catch((error) => Promise.reject(error))
   },
 
-  getAssetById(asset: any) {
-    const { assetId } = asset
+  delete(id: string) {
     return axios
-      .get(`/assets/?assetId=${assetId}`)
+      .delete(`/assets/${id}`)
       .then((response) => Promise.resolve(response))
       .catch((error) => Promise.reject(error))
   },
-
-  getAssetByUnitId(asset: any) {
-    const { unitId } = asset
-    return axios
-      .get(`/assets/?unitId=${unitId}`)
-      .then((response) => Promise.resolve(response))
-      .catch((error) => Promise.reject(error))
-  },
+  
 }

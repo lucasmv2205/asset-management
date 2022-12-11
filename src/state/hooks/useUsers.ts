@@ -22,5 +22,31 @@ export const useUsers = () => {
     })
   }
 
-  return { users, setUser, deleteUser }
+  const createUser = (user: userType) => {
+    return new Promise((resolve, reject) => {
+      UserApi.create(user)
+        .then((res) => {
+          resolve(res.data)
+          const newUser = user
+          setUser([...users, newUser])
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  const editUser = (user: userType) => {
+    return new Promise((resolve, reject) => {
+      UserApi.edit(user)
+        .then((res) => {
+          resolve(res.data)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  return { users, setUser, deleteUser, createUser, editUser }
 }

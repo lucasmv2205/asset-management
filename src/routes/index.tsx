@@ -4,6 +4,7 @@ import { PageTemplate } from "../pages/PageTemplate";
 import { Home } from "../pages/Home";
 import { AssetsPage } from "../pages/Assets";
 import { AssetDetail } from "../pages/AssetDetail";
+import { AssetForm } from "../pages/AssetForm";
 import { CompaniesPage } from "../pages/CompaniesPage";
 import { UsersPage } from "../pages/UsersPage";
 import { UnitsPage } from "../pages/UnitsPage";
@@ -15,6 +16,8 @@ export default function Router() {
         <Route path="/" element={<PageTemplate />}>
           <Route index element={<Home />} />
           <Route path="/assets" element={<AssetsPage />} />
+          <Route path="/assets/create" element={<AssetForm />} />
+          <Route path="/assets/:id/edit" element={<AssetForm />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/units" element={<UnitsPage />} />

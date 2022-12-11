@@ -5,6 +5,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
   CloseOutlined,
+  BranchesOutlined,
 } from "@ant-design/icons";
 import { useCompanies } from "../../state/hooks/useCompanies";
 import { message, Popconfirm } from "antd";
@@ -49,7 +50,7 @@ export function UnitsPage() {
       });
   };
 
-  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+  const cancel = () => {
     message.error("Unit was preserved");
   };
 
@@ -90,9 +91,7 @@ export function UnitsPage() {
           <Button danger type="dashed">
             <Popconfirm
               title="Are you sure to delete this unit?"
-              // @ts-ignore
               onConfirm={() => confirm(id)}
-              // @ts-ignore
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
@@ -125,10 +124,6 @@ export function UnitsPage() {
       });
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    handleEditCancel();
-  };
-
   const onFinishCreateUnit = (values: companyType) => {
     const unit = {
       name: values.name,
@@ -144,10 +139,6 @@ export function UnitsPage() {
       .catch(() => {
         message.error("Fail creating unit");
       });
-  };
-
-  const onFinishCreateFailed = (errorInfo: any) => {
-    handleCreateCancel();
   };
 
   const getCompany = (companyId: string) => {
@@ -166,7 +157,10 @@ export function UnitsPage() {
   return (
     <>
       <Space size={30} align="baseline">
-        <Title level={3}>Units</Title>
+        <Title level={3}>
+          <BranchesOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
+          Units
+        </Title>
         <Button onClick={() => showCreateModal()} type="primary">
           <PlusOutlined />
           add Unit
@@ -180,11 +174,10 @@ export function UnitsPage() {
         onCancel={handleCreateCancel}
       >
         <Form
-          name="create company"
+          name="create unit"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinishCreateUnit}
-          onFinishFailed={onFinishCreateFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -230,7 +223,6 @@ export function UnitsPage() {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
         >
           <Form.Item
             label="Name"

@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Modal, Space, Table } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Space, Table, Typography } from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  GroupOutlined,
+} from "@ant-design/icons";
 import { useCompanies } from "../../state/hooks/useCompanies";
 import { message, Popconfirm } from "antd";
 import Title from "antd/es/typography/Title";
@@ -47,7 +52,7 @@ export function CompaniesPage() {
       });
   };
 
-  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+  const cancel = () => {
     message.error("Company was preserved");
   };
 
@@ -80,9 +85,7 @@ export function CompaniesPage() {
           <Button danger type="dashed">
             <Popconfirm
               title="Are you sure to delete this company?"
-              // @ts-ignore
               onConfirm={() => confirm(id)}
-              // @ts-ignore
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
@@ -114,10 +117,6 @@ export function CompaniesPage() {
       });
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    handleEditCancel();
-  };
-
   const onFinishCreateCompany = (values: any) => {
     const company = {
       name: values.name,
@@ -134,14 +133,13 @@ export function CompaniesPage() {
       });
   };
 
-  const onFinishCreateFailed = (errorInfo: any) => {
-    handleCreateCancel();
-  };
-
   return (
     <>
       <Space size={30} align="baseline">
-        <Title level={3}>Companies</Title>
+        <Title level={3}>
+          <GroupOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
+          Companies
+        </Title>
         <Button onClick={() => showCreateModal()} type="primary">
           <PlusOutlined />
           add Company
@@ -159,7 +157,6 @@ export function CompaniesPage() {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinishCreateCompany}
-          onFinishFailed={onFinishCreateFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -191,7 +188,6 @@ export function CompaniesPage() {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item

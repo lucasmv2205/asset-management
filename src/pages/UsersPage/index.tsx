@@ -15,18 +15,66 @@ import {
   DeleteOutlined,
   PlusOutlined,
   CloseOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import React, { useState } from "react";
 import { useUsers } from "../../state/hooks/useUsers";
 import { useCompanies } from "../../state/hooks/useCompanies";
 import { useUnits } from "../../state/hooks/useUnits";
+import { userType } from "../../types/user";
 
 export function UsersPage() {
-  const { users, deleteUser } = useUsers();
+  const { users, deleteUser, createUser, editUser } = useUsers();
   const { companies } = useCompanies();
   const { units } = useUnits();
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [companyId, setCompanyId] = useState("");
+  const [unitId, setUnitId] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState("");
 
-  const [selectedUser, setSelectedUser] = useState("");
+  const showCreateModal = () => {
+    setIsModalCreateOpen(true);
+  };
+
+  const handleCreateCancel = () => {
+    setIsModalCreateOpen(false);
+  };
+
+  const companiesSelect = companies.map((company) => {
+    return { value: company.id, label: company.name };
+  });
+
+  const onChangeCompany = (value: string) => {
+    setCompanyId(value);
+  };
+
+  const unitsSelect = units.map((unit) => {
+    return { value: unit.id, label: unit.name };
+  });
+
+  const onChangeUnit = (value: string) => {
+    setUnitId(value);
+  };
+
+  const onFinishCreateUser = (values: userType) => {
+    const user = {
+      name: values.name,
+      email: values.email,
+      id: (users.length + 1).toString(),
+      companyId: companyId,
+      unitId: unitId,
+    };
+
+    createUser(user)
+      .then((res) => {
+        message.success("User created");
+        setIsModalCreateOpen(false);
+      })
+      .catch(() => {
+        message.error("Fail creating user");
+      });
+  };
 
   const data = users;
 
@@ -40,7 +88,7 @@ export function UsersPage() {
     return unit;
   };
 
-  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+  const cancel = () => {
     message.error("User was preserved");
   };
 
@@ -52,6 +100,10 @@ export function UsersPage() {
       .catch((err) => {
         message.error("Error deleting user");
       });
+  };
+
+  const showEditModal = () => {
+    setIsModalEditOpen(true);
   };
 
   const columns = [
@@ -94,8 +146,8 @@ export function UsersPage() {
         <Space size="middle">
           <Button
             onClick={() => {
-              // showEditModal();
-              setSelectedUser(id);
+              showEditModal();
+              setSelectedUserId(id);
             }}
           >
             <EditOutlined />
@@ -104,9 +156,7 @@ export function UsersPage() {
           <Button danger type="dashed">
             <Popconfirm
               title="Are you sure to delete this user?"
-              // @ts-ignore
               onConfirm={() => confirm(id)}
-              // @ts-ignore
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
@@ -120,42 +170,79 @@ export function UsersPage() {
     },
   ];
 
+  const handleEditCancel = () => {
+    setIsModalEditOpen(false);
+  };
+
+  const [user] = users.filter((user) => user.id === selectedUserId);
+
+  const onFinish = (values: userType) => {
+    const user = {
+      name: values.name,
+      email: values.email,
+      id: selectedUserId,
+      companyId: companyId,
+      unitId: unitId,
+    };
+
+    editUser(user)
+      .then((res) => {
+        message.success("User edited");
+        setIsModalEditOpen(false);
+      })
+      .catch(() => {
+        message.error("User edited fail");
+      });
+  };
+
   return (
     <>
       <Space size={30} align="baseline">
-        <Title level={3}>Users</Title>
-        <Button
-          // onClick={() =>
-          // showCreateModal()
-          // }
-          type="primary"
-        >
+        <Title level={3}>
+          {" "}
+          <UsergroupAddOutlined
+            style={{ marginRight: "12px", fontSize: "24px" }}
+          />
+          Users
+        </Title>
+        <Button onClick={() => showCreateModal()} type="primary">
           <PlusOutlined />
           add User
         </Button>
       </Space>
       <Table columns={columns} dataSource={data} />
       <Modal
-        title="Create unit"
+        title="Create user"
         open={isModalCreateOpen}
         onCancel={handleCreateCancel}
       >
         <Form
-          name="create company"
+          name="create user"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
-          onFinish={onFinishCreateUnit}
-          onFinishFailed={onFinishCreateFailed}
+          onFinish={onFinishCreateUser}
           autoComplete="off"
         >
           <Form.Item
             label="Name"
             name="name"
+            rules={[{ required: true, message: "Please input the user name!" }]}
+          >
+            <Input name="name" placeholder="e.g.: Lucas Martins" />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
             rules={[
-              { required: true, message: "Please input the company name!" },
+              { required: true, message: "Please input the user email!" },
             ]}
           >
-            <Input name="name" placeholder="e.g.: Ambev" />
+            <Input
+              type="email"
+              name="email"
+              placeholder="e.g.: test@tractian.com"
+            />
           </Form.Item>
 
           <Form.Item
@@ -169,6 +256,99 @@ export function UsersPage() {
               onChange={onChangeCompany}
               clearIcon={<CloseOutlined />}
               options={companiesSelect}
+              style={{ minWidth: "180px" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Unit"
+            rules={[{ required: true, message: "Please select the company" }]}
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select unit"
+              onChange={onChangeUnit}
+              clearIcon={<CloseOutlined />}
+              options={unitsSelect}
+              style={{ minWidth: "180px" }}
+            />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Edit user"
+        open={isModalEditOpen}
+        onCancel={handleEditCancel}
+      >
+        <Form
+          name="Edit company"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          onFinish={onFinish}
+        >
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input the user name!" }]}
+          >
+            <Input
+              defaultValue={user?.name}
+              name="name"
+              placeholder="e.g.: Lucas Martins"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Please input the user email!" },
+            ]}
+          >
+            <Input
+              defaultValue={user?.email}
+              type="email"
+              name="email"
+              placeholder="e.g.: test@tractian.com"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Company"
+            rules={[{ required: true, message: "Please select the company" }]}
+          >
+            <Select
+              showSearch
+              allowClear
+              defaultValue={user?.companyId}
+              placeholder="Select company"
+              onChange={onChangeCompany}
+              clearIcon={<CloseOutlined />}
+              options={companiesSelect}
+              style={{ minWidth: "180px" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Unit"
+            rules={[{ required: true, message: "Please select the company" }]}
+          >
+            <Select
+              showSearch
+              allowClear
+              defaultValue={user?.unitId}
+              placeholder="Select unit"
+              onChange={onChangeUnit}
+              clearIcon={<CloseOutlined />}
+              options={unitsSelect}
               style={{ minWidth: "180px" }}
             />
           </Form.Item>
