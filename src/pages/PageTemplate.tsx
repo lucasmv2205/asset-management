@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { UserOutlined } from "@ant-design/icons";
 import { Button, MenuProps } from "antd";
-import { Layout, Menu, theme } from "antd";
+import { Layout, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 import { AssetApi, CompanyApi, UnitApi, UserApi } from "../services";
@@ -29,7 +28,6 @@ function getItem(
 }
 
 export const PageTemplate: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
   const { setAssets } = useAssets();
   const { setUnits } = useUnits();
   const { setCompanies } = useCompanies();
@@ -80,27 +78,11 @@ export const PageTemplate: React.FC = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
+      {/* <Sider
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-          }}
-        >
-          {!collapsed && (
-            <Title
-              onClick={() => navigate("/")}
-              level={3}
-              style={{ color: "#fff", textAlign: "center", cursor: "pointer" }}
-            >
-              TracOS™
-            </Title>
-          )}
-        </div>
         <Menu
           theme="dark"
           mode="inline"
@@ -120,11 +102,87 @@ export const PageTemplate: React.FC = () => {
             },
           ]}
         ></Menu>
-      </Sider>
+      </Sider> */}
       <Layout className="site-layout">
         <Header
-          style={{ padding: 0, background: colorBgContainer, marginBottom: 16 }}
-        ></Header>
+          style={{
+            padding: 0,
+            background: colorBgContainer,
+            marginBottom: 16,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: 32,
+              margin: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Title
+              onClick={() => navigate("/")}
+              level={3}
+              style={{
+                color: "#000",
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+            >
+              TracOS™
+            </Title>
+          </div>
+          <div
+            style={{
+              height: 32,
+              margin: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "24px",
+            }}
+          >
+            <div>
+              <Button
+                style={{ fontSize: "18px" }}
+                onClick={() => navigate("/assets")}
+                type="link"
+              >
+                Assets
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{ fontSize: "18px" }}
+                onClick={() => navigate("/units")}
+                type="link"
+              >
+                Units
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{ fontSize: "18px" }}
+                onClick={() => navigate("/companies")}
+                type="link"
+              >
+                Companies
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{ fontSize: "18px" }}
+                onClick={() => navigate("/users")}
+                type="link"
+              >
+                Users
+              </Button>
+            </div>
+          </div>
+        </Header>
         <Content
           style={{
             margin: "24px 16px",

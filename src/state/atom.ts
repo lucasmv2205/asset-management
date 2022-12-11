@@ -16,6 +16,6 @@ export const companiesList = atom<any[]>({
 })
 
 export const usersList = atom<any[]>({
-  key: 'companiesList',
+  key: 'usersList',
   default: []
 })

@@ -1,32 +1,165 @@
-import { Alert, Button, Card, Col, Image, Row, Space, Statistic } from "antd";
-import { EditOutlined, ZoomInOutlined } from "@ant-design/icons";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Image,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Typography,
+} from "antd";
+import {
+  BankOutlined,
+  BranchesOutlined,
+  EditOutlined,
+  ZoomInOutlined,
+  CloseOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import { useNavigate } from "react-router-dom";
 import { useAssets } from "../../state/hooks/useAssets";
 import { useUnits } from "../../state/hooks/useUnits";
+import { useEffect, useState } from "react";
 import { useCompanies } from "../../state/hooks/useCompanies";
-import { useUsers } from "../../state/hooks/useUsers";
+const { Text } = Typography;
+
+function UnitContent({ unitId }: any) {
+  const { units } = useUnits();
+  const [unit] = units.filter((unit) => unit.id === unitId);
+  return (
+    <Title
+      level={5}
+      style={{ display: "flex", gap: "8px", alignItems: "center" }}
+    >
+      <BranchesOutlined />
+      {unit?.name}
+    </Title>
+  );
+}
+
+function CompanyContent({ companyId }: any) {
+  const { companies } = useCompanies();
+  const [company] = companies.filter((company) => company.id === companyId);
+
+  return (
+    <Title
+      level={5}
+      style={{ display: "flex", gap: "8px", alignItems: "center" }}
+    >
+      <BankOutlined />
+      {company?.name}
+    </Title>
+  );
+}
 
 export function AssetsPage() {
   const navigate = useNavigate();
   const { assets } = useAssets();
   const { units } = useUnits();
-  const { companies } = useCompanies();
-  const { users } = useUsers();
+  const [assetsPage, setAssetsPage] = useState<any[]>();
 
-  console.log("assets", assets);
-  console.log("units", units);
-  console.log("companies", companies);
-  console.log("users", users);
+  useEffect(() => {
+    setAssetsPage(assets);
+  }, []);
+
+  const getFilteredAssetByUnit = (value: string) => {
+    const filteredAssets = assets.filter((asset) => asset.unitId === value);
+    return filteredAssets;
+  };
+
+  const getFilteredAssetByStatus = (value: string) => {
+    const filteredAssets = assets.filter((asset) => asset.status === value);
+    return filteredAssets;
+  };
+
+  const onChangeUnits = (value: string) => {
+    if (value) {
+      setAssetsPage(getFilteredAssetByUnit(value));
+    } else {
+      setAssetsPage(assets);
+    }
+  };
+
+  const onChangeStatus = (value: string) => {
+    if (value) {
+      setAssetsPage(getFilteredAssetByStatus(value));
+    } else {
+      setAssetsPage(assets);
+    }
+  };
+
+  const unitsSelect = units.map((unit) => {
+    return { value: unit.id, label: unit.name };
+  });
+
+  const statusSelect = [
+    {
+      value: "inAlert",
+      label: "in Alert",
+    },
+    {
+      value: "inOperation",
+      label: "in Operation",
+    },
+    {
+      value: "inDowntime",
+      label: "in Downtime",
+    },
+  ];
 
   return (
-    <>
-      <Title level={3}>Assets</Title>
+    <Col>
+      <Space
+        align="baseline"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: "24px",
+        }}
+      >
+        <Title level={3}>Assets</Title>
+        <Space
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: "12px",
+            marginLeft: "32px",
+          }}
+          align="center"
+        >
+          <FilterOutlined style={{ fontSize: "18px", color: "#2a4cd2" }} />
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select unit"
+            onChange={onChangeUnits}
+            clearIcon={<CloseOutlined />}
+            options={unitsSelect}
+            style={{ minWidth: "180px" }}
+          />
+          <Select
+            showSearch
+            allowClear
+            placeholder="Select status"
+            onChange={onChangeStatus}
+            clearIcon={<CloseOutlined />}
+            options={statusSelect}
+            style={{ minWidth: "180px" }}
+          />
+        </Space>
+      </Space>
+      {/* @ts-ignore */}
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        {/* @ts-ignore */}
-        {assets?.map((asset) => (
+        {assetsPage?.map((asset) => (
           <Col
-            style={{ padding: "8px" }}
+            style={{
+              padding: "18px",
+            }}
             className="gutter-row"
             span={12}
             key={asset.id}
@@ -38,9 +171,22 @@ export function AssetsPage() {
               title={asset.name}
               bordered={false}
             >
+              <Title style={{ fontWeight: "normal" }} level={4}>
+                Location:
+              </Title>
+              <Space
+                style={{ marginLeft: "32px", paddingBottom: "12px" }}
+                wrap
+                align="center"
+                size={20}
+                direction="horizontal"
+              >
+                <CompanyContent companyId={asset.companyId} />
+                <UnitContent unitId={asset.unitId} />
+              </Space>
               <Title level={4}>Model: {asset.model}</Title>
               <Row gutter={[12, 12]}>
-                <Space size={1} direction="horizontal">
+                <Space wrap size={30} align="center" direction="horizontal">
                   <Image
                     style={{ borderRadius: "12px" }}
                     width={200}
@@ -49,9 +195,10 @@ export function AssetsPage() {
                   />
 
                   <Space
-                    style={{ padding: "16px" }}
+                    style={{ padding: "16px", width: "90%" }}
                     size={25}
                     direction="vertical"
+                    wrap
                   >
                     <Space size={3}>
                       <Col>
@@ -72,7 +219,11 @@ export function AssetsPage() {
                     </Space>
                     {asset.status !== "inOperation" && (
                       <Alert
-                        style={{ textAlign: "center", fontWeight: "bold" }}
+                        style={{
+                          textAlign: "center",
+                          fontWeight: "bold",
+                          width: "100%",
+                        }}
                         description={
                           asset.status === "inAlert"
                             ? "In Alert"
@@ -87,61 +238,67 @@ export function AssetsPage() {
 
                 <Space wrap>
                   <Space
-                    size={50}
+                    size={30}
                     style={{ padding: "12px" }}
                     direction="horizontal"
                     wrap
                   >
-                    <Title level={5}>
-                      <Statistic
-                        title="last Uptime At"
-                        value={new Date(
-                          asset.metrics.lastUptimeAt
-                        ).toLocaleDateString("en-us")}
-                        valueStyle={{ color: "#000000" }}
-                      />
-                    </Title>
-
-                    <Title level={5}>
-                      <Statistic
-                        title="health score"
-                        value={asset.healthscore}
-                        precision={2}
-                        // valueStyle={{ color: "#003e86" }}
-                        valueStyle={
-                          asset.healthscore > 75
-                            ? { color: "#25a00d" }
-                            : { color: "#dd3838" }
-                        }
-                        suffix="%"
-                      />
-                    </Title>
+                    <Statistic
+                      title="last Uptime At"
+                      value={new Date(
+                        asset.metrics.lastUptimeAt
+                      ).toLocaleDateString("en-us")}
+                      valueStyle={{ color: "#000000" }}
+                    />
+                    <Statistic
+                      title="health score"
+                      value={asset.healthscore}
+                      precision={2}
+                      // valueStyle={{ color: "#003e86" }}
+                      valueStyle={
+                        asset.healthscore > 75
+                          ? { color: "#25a00d" }
+                          : { color: "#dd3838" }
+                      }
+                      suffix="%"
+                    />
                   </Space>
 
                   <Space
-                    size={50}
+                    size={30}
                     style={{ padding: "12px" }}
                     direction="horizontal"
                     wrap
                   >
-                    <Title level={5}>
-                      <Statistic
-                        title="total Collects Uptime"
-                        value={asset.metrics.totalCollectsUptime}
-                        valueStyle={{ color: "#000000" }}
-                        suffix="times"
-                      />
-                    </Title>
+                    <Statistic
+                      title="total Collects Uptime"
+                      value={asset.metrics.totalCollectsUptime}
+                      valueStyle={{ color: "#000000" }}
+                      suffix="times"
+                    />
 
-                    <Title level={5}>
-                      <Statistic
-                        title="total Uptime"
-                        value={asset.metrics.totalUptime.toFixed(2)}
-                        precision={2}
-                        valueStyle={{ color: "#000000" }}
-                        suffix="hours"
-                      />
-                    </Title>
+                    <Statistic
+                      title="total Uptime"
+                      value={asset.metrics.totalUptime.toFixed(2)}
+                      precision={2}
+                      valueStyle={{ color: "#000000" }}
+                      suffix="hours"
+                    />
+                  </Space>
+                </Space>
+                <Space
+                  align="baseline"
+                  style={{ fontSize: "18px", marginLeft: "16px" }}
+                >
+                  Sensors:
+                  <Space>
+                    {asset.sensors.map((sensor: string) => (
+                      <div>
+                        <Text style={{ fontSize: "16px" }} code>
+                          {sensor}
+                        </Text>
+                      </div>
+                    ))}
                   </Space>
                 </Space>
               </Row>
@@ -149,6 +306,6 @@ export function AssetsPage() {
           </Col>
         ))}
       </Row>
-    </>
+    </Col>
   );
 }

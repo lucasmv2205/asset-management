@@ -1,26 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Card, Col, Divider, Row, Space, Statistic } from "antd";
-import { AssetApi } from "../../services";
+import { Col, Row } from "antd";
 import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import Title from "antd/es/typography/Title";
-
-const COLORS = ["#b32209", "#406dce", "#b7a427"];
+import { useAssets } from "../../state/hooks/useAssets";
 
 export function Home() {
-  const [assets, setAssets] = useState();
-
-  const getAssets = () => {
-    AssetApi.getAll()
-      .then((res) => {
-        setAssets(res.data);
-      })
-      .catch((err) => {});
-  };
-
-  useEffect(() => {
-    getAssets();
-  }, []);
+  const { assets } = useAssets();
 
   // @ts-ignore
   const inDowntime = assets?.filter((asset) => asset.status === "inDowntime");
