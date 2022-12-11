@@ -65,11 +65,8 @@ export function AssetsPage() {
   const navigate = useNavigate();
   const { assets, deleteAsset } = useAssets();
   const { units } = useUnits();
-  const [assetsPage, setAssetsPage] = useState<assetType[]>();
 
-  useEffect(() => {
-    setAssetsPage(assets);
-  }, []);
+  let assetsPage: assetType[] = assets;
 
   const getFilteredAssetByUnit = (value: string) => {
     const filteredAssets = assets.filter((asset) => asset.unitId === value);
@@ -83,17 +80,19 @@ export function AssetsPage() {
 
   const onChangeUnits = (value: string) => {
     if (value) {
-      setAssetsPage(getFilteredAssetByUnit(value));
+      assetsPage = getFilteredAssetByUnit(value);
     } else {
-      setAssetsPage(assets);
+      assetsPage = assets;
     }
   };
 
   const onChangeStatus = (value: string) => {
     if (value) {
-      setAssetsPage(getFilteredAssetByStatus(value));
+      assetsPage = getFilteredAssetByStatus(value);
+      // setAssetsPage(getFilteredAssetByStatus(value));
     } else {
-      setAssetsPage(assets);
+      assetsPage = assets;
+      // setAssetsPage(assets);
     }
   };
 
@@ -120,7 +119,7 @@ export function AssetsPage() {
     deleteAsset(id)
       .then((res) => {
         message.success("Asset deleted");
-        setAssetsPage(assets);
+        assetsPage = assets;
       })
       .catch((err) => {
         message.error("Error deleting asset");
