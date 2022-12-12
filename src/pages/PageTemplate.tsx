@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Divider, Spin } from "antd";
 import { Layout, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
@@ -18,7 +18,8 @@ import {
 const { Header, Content, Footer } = Layout;
 
 export const PageTemplate: React.FC = () => {
-  // const { setAssets } = useAssets();
+  const [loading, setLoading] = useState(true);
+  const { setAssets } = useAssets();
   const { setUnits } = useUnits();
   const { setCompanies } = useCompanies();
   const { setUser } = useUsers();
@@ -27,13 +28,13 @@ export const PageTemplate: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  // const getAssets = () => {
-  //   AssetApi.getAll()
-  //     .then((res) => {
-  //       setAssets(res.data);
-  //     })
-  //     .catch((err) => {});
-  // };
+  const getAssets = () => {
+    AssetApi.getAll()
+      .then((res) => {
+        setAssets(res.data);
+      })
+      .catch((err) => {});
+  };
 
   const getUnits = () => {
     UnitApi.getAll()
@@ -60,10 +61,11 @@ export const PageTemplate: React.FC = () => {
   };
 
   useEffect(() => {
-    // getAssets();
+    getAssets();
     getUnits();
     getCompanies();
     getUsers();
+    setLoading(false);
   }, []);
 
   return (
@@ -102,12 +104,13 @@ export const PageTemplate: React.FC = () => {
           </div>
           <div
             style={{
-              height: 32,
+              height: 50,
               margin: 16,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: "24px",
+              borderLeft: "0.5px solid #3838651c",
             }}
           >
             <div>
@@ -157,17 +160,30 @@ export const PageTemplate: React.FC = () => {
             margin: "24px 16px",
             padding: 24,
             background: colorBgContainer,
+            borderRadius: "12px",
           }}
         >
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-            }}
-          >
-            <Outlet />
-          </div>
+          {loading ? (
+            <Spin
+              style={{ position: "fixed", top: "30%", fontSize: "20px" }}
+              tip="Loading"
+              size="large"
+            >
+              <div className="content">
+                <Outlet />
+              </div>
+            </Spin>
+          ) : (
+            <div
+              style={{
+                padding: 24,
+                minHeight: 360,
+                background: colorBgContainer,
+              }}
+            >
+              <Outlet />
+            </div>
+          )}
         </Content>
       </Layout>
     </Layout>

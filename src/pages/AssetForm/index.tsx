@@ -7,7 +7,6 @@ export function AssetForm() {
   const params = useParams();
   const { assets } = useAssets();
   const [asset] = assets.filter((asset) => asset.id === params?.id);
-  console.log(asset);
 
   return (
     <div>

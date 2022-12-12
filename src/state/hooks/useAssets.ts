@@ -9,14 +9,13 @@ export const useAssets = () => {
   const setAssets = useSetRecoilState(assetsList)
 
   const deleteAsset = (assetId: string) => {
-    console.log(assetId);
     
     return new Promise((resolve, reject) => {
       AssetApi.delete(assetId)
         .then((res) => {
-          resolve(res.data)
-          const assetsFiltered = assets.filter(asset => asset.id !== assetId)
-          setAssets(assetsFiltered)
+            const assetsFiltered = assets.filter(asset => asset.id !== assetId)
+            setAssets(assetsFiltered)
+            resolve(assetsFiltered)
         })
         .catch((err) => {
           reject(err)
