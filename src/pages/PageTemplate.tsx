@@ -18,7 +18,7 @@ import {
 const { Header, Content, Footer } = Layout;
 
 export const PageTemplate: React.FC = () => {
-  const { setAssets } = useAssets();
+  // const { setAssets } = useAssets();
   const { setUnits } = useUnits();
   const { setCompanies } = useCompanies();
   const { setUser } = useUsers();
@@ -27,13 +27,13 @@ export const PageTemplate: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const getAssets = () => {
-    AssetApi.getAll()
-      .then((res) => {
-        setAssets(res.data);
-      })
-      .catch((err) => {});
-  };
+  // const getAssets = () => {
+  //   AssetApi.getAll()
+  //     .then((res) => {
+  //       setAssets(res.data);
+  //     })
+  //     .catch((err) => {});
+  // };
 
   const getUnits = () => {
     UnitApi.getAll()
@@ -60,7 +60,7 @@ export const PageTemplate: React.FC = () => {
   };
 
   useEffect(() => {
-    getAssets();
+    // getAssets();
     getUnits();
     getCompanies();
     getUsers();
