@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { BarChartOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useAssets } from "../../state/hooks/useAssets";
+import Title from "antd/es/typography/Title";
 
 export function Home() {
   const { assets } = useAssets();
@@ -96,13 +98,19 @@ export function Home() {
   };
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col flex="wrap" className="gutter-row" span={12}>
-        <HighchartsReact highcharts={Highcharts} options={optionsHealthy} />
-      </Col>
-      <Col flex="wrap" className="gutter-row" span={12}>
-        <HighchartsReact highcharts={Highcharts} options={optionsStatus} />
-      </Col>
-    </Row>
+    <>
+      <Title style={{ marginBottom: "32px" }} level={3}>
+        <BarChartOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
+        Assets Dashboard
+      </Title>
+      <Row gutter={[16, 16]}>
+        <Col flex="wrap" className="gutter-row" span={12}>
+          <HighchartsReact highcharts={Highcharts} options={optionsHealthy} />
+        </Col>
+        <Col flex="wrap" className="gutter-row" span={12}>
+          <HighchartsReact highcharts={Highcharts} options={optionsStatus} />
+        </Col>
+      </Row>
+    </>
   );
 }

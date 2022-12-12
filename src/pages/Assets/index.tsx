@@ -30,6 +30,7 @@ import { useUnits } from "../../state/hooks/useUnits";
 import { useEffect, useState } from "react";
 import { useCompanies } from "../../state/hooks/useCompanies";
 import { assetType } from "../../types/asset";
+import { AssetApi } from "../../services";
 const { Text } = Typography;
 
 function UnitContent({ unitId }: any) {
@@ -63,12 +64,20 @@ function CompanyContent({ companyId }: any) {
 
 export function AssetsPage() {
   const navigate = useNavigate();
-  const { assets, deleteAsset } = useAssets();
+  const { deleteAsset } = useAssets();
   const { units } = useUnits();
-  const [assetsPage, setAssetsPage] = useState<assetType[]>(assets);
+  const [assets, setAssets] = useState<assetType[]>([] as assetType[]);
+
+  const getAssets = () => {
+    AssetApi.getAll()
+      .then((res) => {
+        setAssets(res.data);
+      })
+      .catch((err) => {});
+  };
 
   useEffect(() => {
-    setAssetsPage(assets);
+    getAssets();
   }, []);
 
   const getFilteredAssetByUnit = (value: string) => {
@@ -83,17 +92,17 @@ export function AssetsPage() {
 
   const onChangeUnits = (value: string) => {
     if (value) {
-      setAssetsPage(getFilteredAssetByUnit(value));
+      setAssets(getFilteredAssetByUnit(value));
     } else {
-      setAssetsPage(assets);
+      setAssets(assets);
     }
   };
 
   const onChangeStatus = (value: string) => {
     if (value) {
-      setAssetsPage(getFilteredAssetByStatus(value));
+      setAssets(getFilteredAssetByStatus(value));
     } else {
-      setAssetsPage(assets);
+      setAssets(assets);
     }
   };
 
@@ -117,10 +126,12 @@ export function AssetsPage() {
   ];
 
   const confirmDeleteAsset = (id: string) => {
+    console.log(id);
+
     deleteAsset(id)
       .then((res) => {
         message.success("Asset deleted");
-        setAssetsPage(assets);
+        // setAssets(assets);
       })
       .catch((err) => {
         message.error("Error deleting asset");
@@ -189,7 +200,7 @@ export function AssetsPage() {
       </Space>
       {/* @ts-ignore */}
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        {assetsPage?.map((asset) => (
+        {assets?.map((asset) => (
           <Col
             style={{
               padding: "18px",
@@ -316,7 +327,7 @@ export function AssetsPage() {
                     Sensors:
                     <Space>
                       {asset.sensors.map((sensor: string) => (
-                        <div>
+                        <div key={sensor}>
                           <Text style={{ fontSize: "16px" }} code>
                             {sensor}
                           </Text>

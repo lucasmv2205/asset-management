@@ -9,6 +9,8 @@ export const useAssets = () => {
   const setAssets = useSetRecoilState(assetsList)
 
   const deleteAsset = (assetId: string) => {
+    console.log(assetId);
+    
     return new Promise((resolve, reject) => {
       AssetApi.delete(assetId)
         .then((res) => {
