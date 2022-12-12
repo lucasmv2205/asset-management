@@ -5,9 +5,23 @@ import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useAssets } from "../../state/hooks/useAssets";
 import Title from "antd/es/typography/Title";
+import { assetType } from "../../types/asset";
+import { AssetApi } from "../../services";
 
 export function Home() {
-  const { assets } = useAssets();
+  const [assets, setAssets] = useState<assetType[]>([] as assetType[]);
+
+  const getAssets = () => {
+    AssetApi.getAll()
+      .then((res) => {
+        setAssets(res.data);
+      })
+      .catch((err) => {});
+  };
+
+  useEffect(() => {
+    getAssets();
+  }, []);
 
   // @ts-ignore
   const inDowntime = assets?.filter((asset) => asset.status === "inDowntime");
