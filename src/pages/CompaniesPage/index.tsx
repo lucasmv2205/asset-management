@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Modal, Space, Table, Typography } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  GroupOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, GroupOutlined } from "@ant-design/icons";
 import { useCompanies } from "../../state/hooks/useCompanies";
-import { message, Popconfirm } from "antd";
+import { message } from "antd";
 import Title from "antd/es/typography/Title";
 import { companyType } from "../../types/company";
+import { CompanyFormModal } from "../../components/CompanyFormModal";
+import { CompanyActions } from "../../components/CompanyActions";
 
 export function CompaniesPage() {
   const { companies, editCompany, deleteCompany, createCompany } =
@@ -72,29 +69,13 @@ export function CompaniesPage() {
       dataIndex: "id",
       key: "id",
       render: (id: any) => (
-        <Space size="middle">
-          <Button
-            onClick={() => {
-              showEditModal();
-              setSelectedCompanyId(id);
-            }}
-          >
-            <EditOutlined />
-            Edit
-          </Button>
-          <Button danger type="dashed">
-            <Popconfirm
-              title="Are you sure to delete this company?"
-              onConfirm={() => confirm(id)}
-              onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined />
-              Delete
-            </Popconfirm>
-          </Button>
-        </Space>
+        <CompanyActions
+          showEditModal={showEditModal}
+          id={id}
+          setSelectedCompanyId={setSelectedCompanyId}
+          cancel={cancel}
+          confirm={confirm}
+        />
       ),
     },
   ];
@@ -117,7 +98,7 @@ export function CompaniesPage() {
       });
   };
 
-  const onFinishCreateCompany = (values: any) => {
+  const onFinishCreateCompany = (values: companyType) => {
     const company = {
       name: values.name,
       id: (companies.length + 1).toString(),
@@ -151,66 +132,18 @@ export function CompaniesPage() {
       </Space>
       <Table columns={columns} dataSource={data} />
 
-      <Modal
-        title="Create company"
-        open={isModalCreateOpen}
+      <CompanyFormModal
+        openModal={isModalCreateOpen}
         onCancel={handleCreateCancel}
-      >
-        <Form
-          name="create company"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinishCreateCompany}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: "Please input the company name!" },
-            ]}
-          >
-            <Input name="name" placeholder="e.g.: Ambev" />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        title="Edit company"
-        open={isModalEditOpen}
-        onOk={handleEditOk}
+        onFinish={onFinishCreateCompany}
+      />
+      <CompanyFormModal
+        edit
+        company={company}
+        openModal={isModalEditOpen}
         onCancel={handleEditCancel}
-      >
-        <Form
-          name="Edit company"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: "Please input the company name!" },
-            ]}
-          >
-            <Input name="name" defaultValue={company?.name} />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={onFinish}
+      />
     </>
   );
 }

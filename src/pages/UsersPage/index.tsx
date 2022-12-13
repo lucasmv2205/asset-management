@@ -1,27 +1,13 @@
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Popconfirm,
-  Select,
-  Space,
-  Table,
-} from "antd";
+import { Button, message, Space, Table } from "antd";
 import Title from "antd/es/typography/Title";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  CloseOutlined,
-  UsergroupAddOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { useUsers } from "../../state/hooks/useUsers";
 import { useCompanies } from "../../state/hooks/useCompanies";
 import { useUnits } from "../../state/hooks/useUnits";
 import { userType } from "../../types/user";
+import { UsersActions } from "../../components/UsersActions";
+import { UserFormModal } from "../../components/UserFormModal";
 
 export function UsersPage() {
   const { users, deleteUser, createUser, editUser } = useUsers();
@@ -143,29 +129,13 @@ export function UsersPage() {
       dataIndex: "id",
       key: "id",
       render: (id: any) => (
-        <Space size="middle">
-          <Button
-            onClick={() => {
-              showEditModal();
-              setSelectedUserId(id);
-            }}
-          >
-            <EditOutlined />
-            Edit
-          </Button>
-          <Button danger type="dashed">
-            <Popconfirm
-              title="Are you sure to delete this user?"
-              onConfirm={() => confirm(id)}
-              onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined />
-              Delete
-            </Popconfirm>
-          </Button>
-        </Space>
+        <UsersActions
+          showEditModal={showEditModal}
+          id={id}
+          setSelectedUserId={setSelectedUserId}
+          cancel={cancel}
+          confirm={confirm}
+        />
       ),
     },
   ];
@@ -215,155 +185,26 @@ export function UsersPage() {
         </Button>
       </Space>
       <Table columns={columns} dataSource={data} />
-      <Modal
-        title="Create user"
-        open={isModalCreateOpen}
+      <UserFormModal
+        isModalOpen={isModalCreateOpen}
         onCancel={handleCreateCancel}
-      >
-        <Form
-          name="create user"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinishCreateUser}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input the user name!" }]}
-          >
-            <Input name="name" placeholder="e.g.: Lucas Martins" />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please input the user email!" },
-            ]}
-          >
-            <Input
-              type="email"
-              name="email"
-              placeholder="e.g.: test@tractian.com"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Company"
-            rules={[{ required: true, message: "Please select the company" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select company"
-              onChange={onChangeCompany}
-              clearIcon={<CloseOutlined />}
-              options={companiesSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Unit"
-            rules={[{ required: true, message: "Please select the company" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select unit"
-              onChange={onChangeUnit}
-              clearIcon={<CloseOutlined />}
-              options={unitsSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        title="Edit user"
-        open={isModalEditOpen}
+        onFinish={onFinishCreateUser}
+        onChangeUnit={onChangeUnit}
+        onChangeCompany={onChangeCompany}
+        companiesSelect={companiesSelect}
+        unitsSelect={unitsSelect}
+      />
+      <UserFormModal
+        edit
+        user={user}
+        isModalOpen={isModalEditOpen}
         onCancel={handleEditCancel}
-      >
-        <Form
-          name="Edit company"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input the user name!" }]}
-          >
-            <Input
-              defaultValue={user?.name}
-              name="name"
-              placeholder="e.g.: Lucas Martins"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please input the user email!" },
-            ]}
-          >
-            <Input
-              defaultValue={user?.email}
-              type="email"
-              name="email"
-              placeholder="e.g.: test@tractian.com"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Company"
-            rules={[{ required: true, message: "Please select the company" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              defaultValue={user?.companyId}
-              placeholder="Select company"
-              onChange={onChangeCompany}
-              clearIcon={<CloseOutlined />}
-              options={companiesSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Unit"
-            rules={[{ required: true, message: "Please select the company" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              defaultValue={user?.unitId}
-              placeholder="Select unit"
-              onChange={onChangeUnit}
-              clearIcon={<CloseOutlined />}
-              options={unitsSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={onFinish}
+        onChangeUnit={onChangeUnit}
+        onChangeCompany={onChangeCompany}
+        companiesSelect={companiesSelect}
+        unitsSelect={unitsSelect}
+      />
     </>
   );
 }

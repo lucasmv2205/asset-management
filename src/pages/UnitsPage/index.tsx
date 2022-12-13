@@ -1,18 +1,13 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Modal, Select, Space, Table } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  CloseOutlined,
-  BranchesOutlined,
-} from "@ant-design/icons";
+import { Button, Space, Table } from "antd";
+import { PlusOutlined, BranchesOutlined } from "@ant-design/icons";
 import { useCompanies } from "../../state/hooks/useCompanies";
-import { message, Popconfirm } from "antd";
+import { message } from "antd";
 import Title from "antd/es/typography/Title";
 import { useUnits } from "../../state/hooks/useUnits";
-import { companyType } from "../../types/company";
 import { unitType } from "../../types/unit";
+import { UnitFormModal } from "../../components/UnitFormModal";
+import { UnitActions } from "../../components/UnitActions";
 
 export function UnitsPage() {
   const { companies } = useCompanies();
@@ -78,29 +73,13 @@ export function UnitsPage() {
       dataIndex: "id",
       key: "id",
       render: (id: any) => (
-        <Space size="middle">
-          <Button
-            onClick={() => {
-              showEditModal();
-              setSelectedUnitId(id);
-            }}
-          >
-            <EditOutlined />
-            Edit
-          </Button>
-          <Button danger type="dashed">
-            <Popconfirm
-              title="Are you sure to delete this unit?"
-              onConfirm={() => confirm(id)}
-              onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined />
-              Delete
-            </Popconfirm>
-          </Button>
-        </Space>
+        <UnitActions
+          showEditModal={showEditModal}
+          id={id}
+          setSelectedUnitId={setSelectedUnitId}
+          cancel={cancel}
+          confirm={confirm}
+        />
       ),
     },
   ];
@@ -124,7 +103,7 @@ export function UnitsPage() {
       });
   };
 
-  const onFinishCreateUnit = (values: companyType) => {
+  const onFinishCreateUnit = (values: unitType) => {
     const unit = {
       name: values.name,
       id: (units.length + 1).toString(),
@@ -172,93 +151,22 @@ export function UnitsPage() {
       </Space>
       <Table columns={columns} dataSource={data} />
 
-      <Modal
-        title="Create unit"
-        open={isModalCreateOpen}
+      <UnitFormModal
+        isModalOpen={isModalCreateOpen}
+        onChangeCompany={onChangeCompany}
+        companiesSelect={companiesSelect}
         onCancel={handleCreateCancel}
-      >
-        <Form
-          name="create unit"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinishCreateUnit}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              { required: true, message: "Please input the company name!" },
-            ]}
-          >
-            <Input name="name" placeholder="e.g.: Ambev" />
-          </Form.Item>
-
-          <Form.Item
-            label="Company"
-            rules={[{ required: true, message: "Please select the company" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select company"
-              onChange={onChangeCompany}
-              clearIcon={<CloseOutlined />}
-              options={companiesSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        title="Edit unit"
-        open={isModalEditOpen}
+        onFinish={onFinishCreateUnit}
+      />
+      <UnitFormModal
+        edit
+        unit={unit}
+        isModalOpen={isModalEditOpen}
+        onChangeCompany={onChangeCompany}
+        companiesSelect={companiesSelect}
         onCancel={handleEditCancel}
-      >
-        <Form
-          name="Edit company"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input the unit name!" }]}
-          >
-            <Input name="name" defaultValue={unit?.name} />
-          </Form.Item>
-
-          <Form.Item
-            label="company"
-            rules={[{ required: true, message: "Please select the unit" }]}
-          >
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select company"
-              onChange={onChangeCompany}
-              clearIcon={<CloseOutlined />}
-              defaultValue={unit?.companyId}
-              options={companiesSelect}
-              style={{ minWidth: "180px" }}
-            />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={onFinish}
+      />
     </>
   );
 }
