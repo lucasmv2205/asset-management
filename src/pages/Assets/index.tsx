@@ -67,7 +67,7 @@ function CompanyContent({ companyId }: any) {
 export function AssetsPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { deleteAsset } = useAssets();
+  const { deleteAsset, assets } = useAssets();
   const { units } = useUnits();
   const [assetsPage, setAssetsPage] = useState<assetType[]>();
 
@@ -96,7 +96,10 @@ export function AssetsPage() {
       const assets = await getFilteredAssetByUnit(value);
       setAssetsPage(assets.data);
       setLoading(false);
+      return;
     }
+    setAssetsPage(assets);
+    setLoading(false);
   };
 
   const onChangeStatus = async (value: string) => {
@@ -105,7 +108,10 @@ export function AssetsPage() {
       const assets = await getFilteredAssetByStatus(value);
       setAssetsPage(assets.data);
       setLoading(false);
+      return;
     }
+    setAssetsPage(assets);
+    setLoading(false);
   };
 
   const unitsSelect = units.map((unit) => {
