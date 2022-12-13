@@ -159,60 +159,52 @@ export function AssetsPage() {
       size="large"
     >
       <Col>
-        <Space
-          align="baseline"
+        <div
           style={{
             display: "flex",
             flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
             flexWrap: "wrap",
             gap: "24px",
           }}
         >
-          <Title level={3}>
-            <HddOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
-            Assets
-          </Title>
-          <Space
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: "12px",
-              marginLeft: "32px",
-            }}
-            align="center"
-          >
-            <FilterOutlined style={{ fontSize: "18px", color: "#2a4cd2" }} />
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select unit"
-              onChange={onChangeUnits}
-              clearIcon={<CloseOutlined />}
-              options={unitsSelect}
-              style={{ minWidth: "180px" }}
-            />
-            <Select
-              showSearch
-              allowClear
-              placeholder="Select status"
-              onChange={onChangeStatus}
-              clearIcon={<CloseOutlined />}
-              options={statusSelect}
-              style={{ minWidth: "180px" }}
-            />
+          <Space align="baseline" direction="horizontal">
+            <Title level={3}>
+              <HddOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
+              Assets
+            </Title>
+            <Space
+              direction="horizontal"
+              size={20}
+              style={{ marginLeft: "32px" }}
+            >
+              <FilterOutlined style={{ fontSize: "18px", color: "#2a4cd2" }} />
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select unit"
+                onChange={onChangeUnits}
+                clearIcon={<CloseOutlined />}
+                options={unitsSelect}
+                style={{ minWidth: "180px" }}
+              />
+              <Select
+                showSearch
+                allowClear
+                placeholder="Select status"
+                onChange={onChangeStatus}
+                clearIcon={<CloseOutlined />}
+                options={statusSelect}
+                style={{ minWidth: "180px" }}
+              />
+            </Space>
           </Space>
-          <Space
-            style={{
-              marginLeft: "32px",
-            }}
-          >
-            <Button onClick={() => navigate("/assets/create")} type="primary">
-              <PlusOutlined />
-              add Asset
-            </Button>
-          </Space>
-        </Space>
+          <Button onClick={() => navigate("/assets/create")} type="primary">
+            <PlusOutlined />
+            add Asset
+          </Button>
+        </div>
         {/* @ts-ignore */}
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           {assetsPage?.map((asset) => (

@@ -197,7 +197,11 @@ export function UsersPage() {
 
   return (
     <>
-      <Space size={30} align="baseline">
+      <Space
+        style={{ display: "flex", justifyContent: "space-between" }}
+        size={30}
+        align="baseline"
+      >
         <Title level={3}>
           {" "}
           <UsergroupAddOutlined

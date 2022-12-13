@@ -135,7 +135,11 @@ export function CompaniesPage() {
 
   return (
     <>
-      <Space size={30} align="baseline">
+      <Space
+        style={{ display: "flex", justifyContent: "space-between" }}
+        size={30}
+        align="baseline"
+      >
         <Title level={3}>
           <GroupOutlined style={{ marginRight: "12px", fontSize: "24px" }} />
           Companies

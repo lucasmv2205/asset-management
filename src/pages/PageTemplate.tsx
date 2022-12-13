@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Spin } from "antd";
+import { Avatar, Button, Divider, Select, Space, Spin, Typography } from "antd";
 import { Layout, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
@@ -13,14 +13,17 @@ import {
   BranchesOutlined,
   UsergroupAddOutlined,
   HddOutlined,
+  CloseOutlined,
+  AntDesignOutlined,
 } from "@ant-design/icons";
 
-const { Header, Content, Footer } = Layout;
+const { Text } = Typography;
+const { Header, Content } = Layout;
 
 export const PageTemplate: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { setAssets } = useAssets();
-  const { setUnits } = useUnits();
+  const { setUnits, units } = useUnits();
   const { setCompanies } = useCompanies();
   const { setUser } = useUsers();
   const navigate = useNavigate();
@@ -68,93 +71,129 @@ export const PageTemplate: React.FC = () => {
     setLoading(false);
   }, []);
 
+  const unitsSelect = units.map((unit) => {
+    return { value: unit.id, label: unit.name };
+  });
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Layout className="site-layout">
+      <Layout>
         <Header
           style={{
             padding: 0,
-            background: colorBgContainer,
             marginBottom: 16,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
           <div
             style={{
-              height: 32,
-              margin: 16,
+              padding: 32,
               display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
               alignItems: "center",
-              justifyContent: "flex-start",
+              justifyContent: "space-between",
             }}
           >
             <Title
               onClick={() => navigate("/")}
-              level={3}
+              level={2}
               style={{
-                color: "#000",
+                color: "#fff",
                 textAlign: "center",
                 cursor: "pointer",
+                margin: 24,
               }}
             >
               TracOS™
             </Title>
+
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select unit"
+              // onChange={onChangeUnits}
+              clearIcon={<CloseOutlined />}
+              options={unitsSelect}
+              style={{ minWidth: "200px" }}
+            />
           </div>
           <div
             style={{
-              height: 50,
-              margin: 16,
+              padding: 32,
               display: "flex",
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
-              gap: "24px",
-              borderLeft: "0.5px solid #3838651c",
+              gap: "8px",
             }}
           >
+            <Avatar src="https://github.com/lucasmv2205.png" size={64} />
             <div>
-              <Button
-                style={{ fontSize: "18px" }}
-                onClick={() => navigate("/assets")}
-                type="link"
-              >
-                <HddOutlined />
-                Assets
-              </Button>
-            </div>
-            <div>
-              <Button
-                style={{ fontSize: "18px" }}
-                onClick={() => navigate("/units")}
-                type="link"
-              >
-                <BranchesOutlined />
-                Units
-              </Button>
-            </div>
-            <div>
-              <Button
-                style={{ fontSize: "18px" }}
-                onClick={() => navigate("/companies")}
-                type="link"
-              >
-                <GroupOutlined />
-                Companies
-              </Button>
-            </div>
-            <div>
-              <Button
-                style={{ fontSize: "18px" }}
-                onClick={() => navigate("/users")}
-                type="link"
-              >
-                <UsergroupAddOutlined />
-                Users
-              </Button>
+              <div>
+                <Text style={{ color: "#e4e3e3", display: "block" }}>
+                  Logged user
+                </Text>
+              </div>
+              <div>
+                <Text style={{ color: "#c1bcbc", display: "block" }}>
+                  user.email@email.com
+                </Text>
+              </div>
             </div>
           </div>
         </Header>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "12rem",
+          }}
+        >
+          <div>
+            <Button
+              style={{ fontSize: "18px" }}
+              onClick={() => navigate("/assets")}
+              type="link"
+            >
+              <HddOutlined />
+              Assets
+            </Button>
+          </div>
+          <div>
+            <Button
+              style={{ fontSize: "18px" }}
+              onClick={() => navigate("/units")}
+              type="link"
+            >
+              <BranchesOutlined />
+              Units
+            </Button>
+          </div>
+          <div>
+            <Button
+              style={{ fontSize: "18px" }}
+              onClick={() => navigate("/companies")}
+              type="link"
+            >
+              <GroupOutlined />
+              Companies
+            </Button>
+          </div>
+          <div>
+            <Button
+              style={{ fontSize: "18px" }}
+              onClick={() => navigate("/users")}
+              type="link"
+            >
+              <UsergroupAddOutlined />
+              Users
+            </Button>
+          </div>
+        </div>
         <Content
           style={{
             margin: "24px 16px",
