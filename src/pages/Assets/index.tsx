@@ -143,10 +143,10 @@ export function AssetsPage() {
             add Asset
           </Button>
         </div>
-        {/* @ts-ignore */}
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           {assetsPage?.map((asset) => (
             <AssetCard
+              key={asset.id}
               asset={asset}
               setAssetsPage={setAssetsPage}
               setLoading={setLoading}
